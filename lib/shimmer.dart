@@ -7,6 +7,7 @@
 
 library shimmer;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -160,16 +161,27 @@ class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      child: widget.child,
-      builder: (BuildContext context, Widget child) => _Shimmer(
-        child: child,
-        direction: widget.direction,
-        gradient: widget.gradient,
-        percent: _controller.value,
-      ),
-    );
+    if (kIsWeb) {
+      return Stack(
+        children: [
+          widget.child,
+          Container(
+            color: widget.gradient.colors.first,
+          ),
+        ],
+      );
+    } else {
+      return AnimatedBuilder(
+        animation: _controller,
+        child: widget.child,
+        builder: (BuildContext context, Widget child) => _Shimmer(
+          child: child,
+          direction: widget.direction,
+          gradient: widget.gradient,
+          percent: _controller.value,
+        ),
+      );
+    }
   }
 
   @override
